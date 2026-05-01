@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
+import type { Session } from "@supabase/supabase-js";
 import { Button } from "./components/ui/button.tsx";
+import { AuthScreen } from "./components/AuthScreen";
 import { PickerModal } from "./components/PickerModal";
 import { PokerTable } from "./components/PokerTable";
 import { buildAdvice } from "./lib/adviceEngine";
+import { supabase } from "./lib/supabase";
 import type { PickerTarget, TableState } from "./types/poker";
 
 const emptyTable = (id: number): TableState => ({
@@ -30,6 +33,8 @@ const emptyTable = (id: number): TableState => ({
 });
 
 export default function App() {
+  const [session, setSession] = useState<Session | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [tables, setTables] = useState<TableState[]>([
     emptyTable(1),
     emptyTable(2),
@@ -38,6 +43,22 @@ export default function App() {
   ]);
   const [picker, setPicker] = useState<PickerTarget>(null);
   const [visibleTables, setVisibleTables] = useState<number>(1);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setAuthLoading(false);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
+      setAuthLoading(false);
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
 
   const logHand = () => {
     const currentTables = tables.slice(0, visibleTables);
@@ -69,47 +90,67 @@ export default function App() {
   }, [tables, visibleTables]);
 
   const update = (id: number, data: TableState) => {
-    setTables((prev) => prev.map((t) => (t.id === id ? data : t)));
+    setTables((prev) => prev.map((table) => (table.id === id ? data : table)));
   };
 
   const applyCard = (card: string) => {
     if (!picker) return;
+
     setTables((prev) =>
-      prev.map((t) => {
-        if (t.id !== picker.tableId) return t;
+      prev.map((table) => {
+        if (table.id !== picker.tableId) return table;
+
         if (picker.zone === "hero") {
-          const hero = [...t.hero] as [string, string];
+          const hero = [...table.hero] as [string, string];
           hero[picker.index] = card;
-          return { ...t, hero };
+          return { ...table, hero };
         }
-        const board = [...t.board] as [string, string, string, string, string];
+
+        const board = [...table.board] as [string, string, string, string, string];
         board[picker.index] = card;
-        return { ...t, board };
+        return { ...table, board };
       })
     );
+
     setPicker(null);
   };
 
   const clearCard = () => {
     if (!picker) return;
+
     setTables((prev) =>
-      prev.map((t) => {
-        if (t.id !== picker.tableId) return t;
+      prev.map((table) => {
+        if (table.id !== picker.tableId) return table;
+
         if (picker.zone === "hero") {
-          const hero = [...t.hero] as [string, string];
+          const hero = [...table.hero] as [string, string];
           hero[picker.index] = "";
-          return { ...t, hero };
+          return { ...table, hero };
         }
-        const board = [...t.board] as [string, string, string, string, string];
+
+        const board = [...table.board] as [string, string, string, string, string];
         board[picker.index] = "";
-        return { ...t, board };
+        return { ...table, board };
       })
     );
+
     setPicker(null);
   };
 
   const shownTables = useMemo(() => tables.slice(0, visibleTables), [tables, visibleTables]);
   const gridClass = visibleTables === 1 ? "grid-cols-1" : "grid-cols-1 xl:grid-cols-2";
+
+  if (authLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black text-white">
+        Cargando...
+      </div>
+    );
+  }
+
+  if (!session) {
+    return <AuthScreen onAuthSuccess={() => {}} />;
+  }
 
   return (
     <div className="min-h-screen bg-black p-2 sm:p-4">
@@ -125,16 +166,24 @@ export default function App() {
             {count} mesa{count > 1 ? "s" : ""}
           </Button>
         ))}
+
+        <Button
+          variant="outline"
+          className="ml-auto border-neutral-700 bg-neutral-900 text-neutral-200 hover:bg-neutral-800"
+          onClick={() => supabase.auth.signOut()}
+        >
+          Salir
+        </Button>
       </div>
 
       <div className={`grid ${gridClass} gap-4`}>
-        {shownTables.map((t) => (
+        {shownTables.map((table) => (
           <PokerTable
-            key={t.id}
-            table={t}
-            onUpdate={(d) => update(t.id, d)}
-            onOpenPicker={(zone, index) => setPicker({ tableId: t.id, zone, index })}
-            onReset={() => update(t.id, emptyTable(t.id))}
+            key={table.id}
+            table={table}
+            onUpdate={(data) => update(table.id, data)}
+            onOpenPicker={(zone, index) => setPicker({ tableId: table.id, zone, index })}
+            onReset={() => update(table.id, emptyTable(table.id))}
           />
         ))}
       </div>
