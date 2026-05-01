@@ -7,7 +7,6 @@ import { CardSlot } from "./CardSlot";
 import { PlayerSeat } from "./PlayerSeat";
 import { ToggleChip } from "./ToggleChip";
 
-
 const positionOptions: { value: Position; label: string }[] = [
   { value: "UTG", label: "UTG" },
   { value: "MP", label: "Posición media" },
@@ -31,30 +30,30 @@ export function PokerTable({ table, onUpdate, onOpenPicker, onReset }: { table: 
             </div>
             <Button variant="outline" size="icon" onClick={onReset}>↺</Button>
           </div>
-          <div className="grid grid-cols-2 gap-2 p-3 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-2 p-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <div className="rounded-xl border border-neutral-700 bg-black/25 p-2">
               <div className="text-[10px] uppercase tracking-[0.22em] text-neutral-400">Jugadores restantes</div>
-              <Input placeholder="Quedan" value={table.playersLeft} onChange={(e) => onUpdate({ ...table, playersLeft: e.target.value })} className="mt-1 border-neutral-700 bg-neutral-900 text-white" />
+              <Input placeholder="Quedan" value={table.playersLeft} onChange={(e) => onUpdate({ ...table, playersLeft: e.target.value })} className="mt-1 w-full border-neutral-700 bg-neutral-900 text-white" />
             </div>
             <div className="rounded-xl border border-neutral-700 bg-black/25 p-2">
               <div className="text-[10px] uppercase tracking-[0.22em] text-neutral-400">Puestos pagados</div>
-              <Input placeholder="ITM" value={table.paidPlaces} onChange={(e) => onUpdate({ ...table, paidPlaces: e.target.value })} className="mt-1 border-neutral-700 bg-neutral-900 text-white" />
+              <Input placeholder="ITM" value={table.paidPlaces} onChange={(e) => onUpdate({ ...table, paidPlaces: e.target.value })} className="mt-1 w-full border-neutral-700 bg-neutral-900 text-white" />
             </div>
             <div className="rounded-xl border border-neutral-700 bg-black/25 p-2">
               <div className="text-[10px] uppercase tracking-[0.22em] text-neutral-400">Ciegas</div>
-              <Input placeholder="100/200" value={table.blinds} onChange={(e) => onUpdate({ ...table, blinds: e.target.value })} className="mt-1 border-neutral-700 bg-neutral-900 text-white" />
+              <Input placeholder="100/200" value={table.blinds} onChange={(e) => onUpdate({ ...table, blinds: e.target.value })} className="mt-1 w-full border-neutral-700 bg-neutral-900 text-white" />
             </div>
             <div className="rounded-xl border border-neutral-700 bg-black/25 p-2">
               <div className="text-[10px] uppercase tracking-[0.22em] text-neutral-400">Notas</div>
-              <Input placeholder="Notas" value={table.notes} onChange={(e) => onUpdate({ ...table, notes: e.target.value })} className="mt-1 border-neutral-700 bg-neutral-900 text-white" />
+              <Input placeholder="Notas" value={table.notes} onChange={(e) => onUpdate({ ...table, notes: e.target.value })} className="mt-1 w-full border-neutral-700 bg-neutral-900 text-white" />
             </div>
           </div>
         </div>
 
         {/* LAYOUT LIMPIO: acciones izquierda / mesa centro / posiciones derecha */}
-        <div className="flex items-end justify-between gap-3">
+        <div className="flex flex-col items-stretch gap-3 lg:flex-row lg:items-end lg:justify-between">
           {/* IZQUIERDA: ACCIONES */}
-          <div className="w-[170px] rounded-2xl border border-neutral-800 bg-black/55 p-2 flex flex-col gap-2">
+          <div className="order-2 grid grid-cols-2 gap-2 rounded-2xl border border-neutral-800 bg-black/55 p-2 sm:grid-cols-4 lg:order-1 lg:w-[170px] lg:flex lg:flex-col">
             <ToggleChip active={table.nobodyTalked} label="Nadie habló" activeClass="border-emerald-500 bg-emerald-700 text-white hover:bg-emerald-600" onClick={() => onUpdate({ ...table, nobodyTalked: !table.nobodyTalked })} />
             <ToggleChip active={table.someoneRaised} label="Hicieron raise" activeClass="border-amber-500 bg-amber-700 text-white hover:bg-amber-600" onClick={() => onUpdate({ ...table, someoneRaised: !table.someoneRaised })} />
             <ToggleChip active={table.threeBet} label="Hicieron 3bet" activeClass="border-fuchsia-500 bg-fuchsia-700 text-white hover:bg-fuchsia-600" onClick={() => onUpdate({ ...table, threeBet: !table.threeBet })} />
@@ -62,45 +61,45 @@ export function PokerTable({ table, onUpdate, onOpenPicker, onReset }: { table: 
           </div>
 
           {/* CENTRO: MESA */}
-          <div className="relative h-[410px] w-full max-w-[520px]">
+          <div className="relative order-1 mx-auto aspect-[52/41] w-full max-w-[520px] lg:order-2 lg:h-[410px]">
             <div className="absolute inset-0 rounded-[170px] border border-emerald-900 bg-[radial-gradient(circle_at_center,_#1b6a4a_0%,_#0f3f2e_60%,_#08241b_100%)] shadow-inner" />
 
             <div className="absolute left-1/2 top-4 -translate-x-1/2 rounded-xl bg-black/40 px-3 py-1 text-xs">
               Pote: {table.pot || 0}
             </div>
 
-            <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 gap-2">
+            <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 gap-1.5 sm:gap-2">
               {table.board.map((c, i) => (
                 <CardSlot key={i} card={c} onClick={() => onOpenPicker("board", i)} />
               ))}
             </div>
 
-            <div className="absolute bottom-16 left-1/2 flex -translate-x-1/2 items-start gap-3">
-              <div className="flex gap-2">
+            <div className="absolute bottom-10 left-1/2 flex -translate-x-1/2 items-start gap-2 sm:bottom-16 sm:gap-3">
+              <div className="flex gap-1.5 sm:gap-2">
                 {table.hero.map((c, i) => (
                   <CardSlot key={i} card={c} onClick={() => onOpenPicker("hero", i)} />
                 ))}
               </div>
-              <div className="min-w-[110px] rounded-xl border border-neutral-700 bg-black/35 p-2">
+              <div className="min-w-[100px] rounded-xl border border-neutral-700 bg-black/35 p-2 sm:min-w-[110px]">
                 <div className="text-[10px] uppercase tracking-[0.22em] text-neutral-400">Mis BB</div>
-                <Input placeholder="BB" value={table.heroBb} onChange={(e) => onUpdate({ ...table, heroBb: e.target.value })} className="mt-1 border-neutral-700 bg-neutral-900 text-white" />
+                <Input placeholder="BB" value={table.heroBb} onChange={(e) => onUpdate({ ...table, heroBb: e.target.value })} className="mt-1 w-full border-neutral-700 bg-neutral-900 text-white" />
               </div>
             </div>
 
             <div className="pointer-events-none absolute inset-0">
-              <PlayerSeat className="left-1/2 top-2 -translate-x-[140px]" />
-              <PlayerSeat className="left-1/2 top-2 translate-x-[70px]" />
-              <PlayerSeat className="right-2 top-1/2 -translate-y-[105px]" />
-              <PlayerSeat className="right-2 top-1/2 translate-y-[20px]" />
-              <PlayerSeat className="left-1/2 bottom-2 translate-x-[70px]" />
-              <PlayerSeat className="left-1/2 bottom-2 -translate-x-[140px]" />
-              <PlayerSeat className="left-2 top-1/2 translate-y-[20px]" />
-              <PlayerSeat className="left-2 top-1/2 -translate-y-[105px]" />
+              <PlayerSeat className="left-1/2 top-2 -translate-x-[140px] max-sm:-translate-x-[110px]" />
+              <PlayerSeat className="left-1/2 top-2 translate-x-[70px] max-sm:translate-x-[55px]" />
+              <PlayerSeat className="right-2 top-1/2 -translate-y-[105px] max-sm:-translate-y-[82px]" />
+              <PlayerSeat className="right-2 top-1/2 translate-y-[20px] max-sm:translate-y-[12px]" />
+              <PlayerSeat className="left-1/2 bottom-2 translate-x-[70px] max-sm:translate-x-[55px]" />
+              <PlayerSeat className="left-1/2 bottom-2 -translate-x-[140px] max-sm:-translate-x-[110px]" />
+              <PlayerSeat className="left-2 top-1/2 translate-y-[20px] max-sm:translate-y-[12px]" />
+              <PlayerSeat className="left-2 top-1/2 -translate-y-[105px] max-sm:-translate-y-[82px]" />
             </div>
           </div>
 
           {/* DERECHA: POSICIONES */}
-          <div className="w-[170px] rounded-2xl border border-neutral-800 bg-black/55 p-2 flex flex-col gap-2">
+          <div className="order-3 grid grid-cols-2 gap-2 rounded-2xl border border-neutral-800 bg-black/55 p-2 sm:grid-cols-3 lg:w-[170px] lg:flex lg:flex-col">
             {positionOptions.map((p) => (
               <button
                 key={p.value}
