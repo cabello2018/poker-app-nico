@@ -112,7 +112,7 @@ export default function App() {
   const gridClass = visibleTables === 1 ? "grid-cols-1" : "grid-cols-1 xl:grid-cols-2";
 
   return (
-    <div className="min-h-screen bg-black p-4">
+    <div className="min-h-screen bg-black p-2 sm:p-4">
       <div className="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-neutral-800 bg-[#0b0f14] p-3">
         <div className="mr-2 text-sm font-semibold text-white">Mesas visibles</div>
         {[1, 2, 3, 4].map((count) => (
