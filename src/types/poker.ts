@@ -106,3 +106,21 @@ declare global {
     logHand: () => void;
   }
 }
+
+export type JugadorAccion =
+  | "Hero"
+  | "Rival 1"
+  | "Rival 2"
+  | "Rival 3"
+  | "Rival 4"
+  | "Rival 5"
+  | "Rival 6"
+  | "Rival 7"
+  | "Rival 8";
+
+export type RivalMesa = {
+  id: number;
+  nombre: string;
+  bb: string;
+  cartas: string;
+};

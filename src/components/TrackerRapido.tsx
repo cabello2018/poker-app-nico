@@ -28,7 +28,8 @@ export function TrackerRapido({ table, onUpdate }: TrackerRapidoProps) {
       jugador: table.jugadorAccion || "Hero",
       accion: table.tipoAccion,
       tamano: table.tamanoAccion,
-    };
+    
+      nota: "",};
 
     onUpdate({
       ...table,
@@ -186,3 +187,4 @@ export function TrackerRapido({ table, onUpdate }: TrackerRapidoProps) {
     </div>
   );
 }
+

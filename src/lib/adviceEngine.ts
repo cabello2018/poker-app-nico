@@ -1,8 +1,6 @@
 import type {
   AdviceAction,
-  AdviceResult,
-  ProVerdict,
-  TableState,
+  AdviceResult,  TableState,
 } from "../types/poker";
 
 export function normalizeRank(card: string) {
@@ -433,3 +431,4 @@ export function buildAdvice(table: TableState): AdviceResult {
       "Te ganan dobles, sets, overpairs, color, escalera y top pair mejor kicker en gran parte de los rangos que apuestan fuerte.",
   };
 }
+
